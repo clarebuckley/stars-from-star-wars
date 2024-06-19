@@ -1,27 +1,27 @@
 <template>
-    <v-card v-if="!selectedCharacter" class="pa-2">
+    <v-card v-if="!likedCharactersStore.getSelectedCharacter" class="pa-2">
         <h1>No character selected</h1>
     </v-card>
     <v-card v-else class="pa-2">
-        <h1>{{ selectedCharacter.name }}</h1>
-        <p>Birth year: {{ selectedCharacter.birth_year }}</p>
-        <p>Eye colour: {{ selectedCharacter.eye_color }}</p>
-        <p>Gender: {{ selectedCharacter.gender }}</p>
-        <p>Hair colour: {{ selectedCharacter.hair_color }}</p>
-        <p>Mass: {{ selectedCharacter.mass }}kg</p>
-        <p>Height: {{ selectedCharacter.height }}cm</p>
+        <h1>{{ likedCharactersStore.getSelectedCharacter.name }}</h1>
+        <p>Birth year: {{ likedCharactersStore.getSelectedCharacter.birth_year }}</p>
+        <p>Eye colour: {{ likedCharactersStore.getSelectedCharacter.eye_color }}</p>
+        <p>Gender: {{ likedCharactersStore.getSelectedCharacter.gender }}</p>
+        <p>Hair colour: {{ likedCharactersStore.getSelectedCharacter.hair_color }}</p>
+        <p>Mass: {{ likedCharactersStore.getSelectedCharacter.mass }}kg</p>
+        <p>Height: {{ likedCharactersStore.getSelectedCharacter.height }}cm</p>
 
         <v-expansion-panels v-model="expanded">
             <v-expansion-panel :title="'Loading...'" v-if="dataLoading">
             </v-expansion-panel>
-            <v-expansion-panel title="Films" v-if="selectedCharacter.films.length > 0" @click="getFilmData()">
+            <v-expansion-panel title="Films" v-if="likedCharactersStore.getSelectedCharacter.films.length > 0" @click="getFilmData()">
                 <v-expansion-panel-text v-for="film in selectedCharacterFilms" :key="film.episode_id">
                     <h2>{{ film.title }} (Episode {{ film.episode_id }})</h2>
                     <p>Release date: {{ film.release_date }}</p>
                     <p>Directed by {{ film.director }}, produced by {{ film.producer }}</p>
                 </v-expansion-panel-text>
             </v-expansion-panel>
-            <v-expansion-panel title="Homeworld" v-if="selectedCharacter.homeworld.length > 0"
+            <v-expansion-panel title="Homeworld" v-if="likedCharactersStore.getSelectedCharacter.homeworld.length > 0"
                 @click="getHomeworldData()">
                 <v-expansion-panel-text>
                     <h2>The planet {{ selectedCharacterHomeworld.name }}</h2>
@@ -34,30 +34,29 @@
         </v-expansion-panels>
 
 
-        <p>Data last updated on: {{ selectedCharacter.edited }}</p>
+        <p>Data last updated on: {{ likedCharactersStore.getSelectedCharacter.edited }}</p>
     </v-card>
 </template>
 
 
 
-<script setup lang="ts">
+<script setup>
 import { getFilmDetailsByCharacter } from '../services/films/FilmDetails.api';
 import { getPlanetDetails } from '../services/planets/PlanetDetails.api.ts';
 import { ref, watch } from 'vue';
+import { useLikedCharactersStore } from '@/stores/likedCharacters'
 
 const dataLoading = ref(false);
 const expanded = ref(null);
-
-const props = defineProps({
-    selectedCharacter: Object
-})
+const errored = ref(false);
 
 const selectedCharacterFilms = ref([]);
 const selectedCharacterHomeworld = ref([])
+const likedCharactersStore = useLikedCharactersStore();
 
 async function getFilmData() {
     dataLoading.value = true;
-    const [error, filmResponse] = await getFilmDetailsByCharacter(props.selectedCharacter);
+    const [error, filmResponse] = await getFilmDetailsByCharacter(likedCharactersStore.getSelectedCharacter);
     selectedCharacterFilms.value = filmResponse;
     if (error) {
         handleError(error);
@@ -69,7 +68,7 @@ async function getFilmData() {
 
 async function getHomeworldData() {
     dataLoading.value = true;
-    const [error, planetResponse] = await getPlanetDetails(props.selectedCharacter.homeworld);
+    const [error, planetResponse] = await getPlanetDetails(likedCharactersStore.getSelectedCharacter.homeworld);
     selectedCharacterHomeworld.value = planetResponse;
     if (error) {
         handleError(error);
@@ -85,9 +84,17 @@ function resetData() {
     expanded.value = null;
 }
 
-watch(() => props.selectedCharacter, (first, second) => {
+watch(() => likedCharactersStore.getSelectedCharacter, (first, second) => {
     resetData();
 });
+
+function handleError(error) {
+    console.error(error)
+    errored.value = true;
+    errorMessage.value = error.message;
+    pageLoading.value = false;
+}
+
 
 
 </script>
