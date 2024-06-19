@@ -1,6 +1,6 @@
 <template>
     <v-list lines="three">
-        <v-list-item v-for="character in characters" :key="character.url" :title="character.name"
+        <v-list-item v-for="character in characters" :key="character.url"
             @click="updateSelectedCharacter(character.url)">
             <v-list-item-title>
                 <div>
