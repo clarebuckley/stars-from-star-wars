@@ -1,38 +1,33 @@
 import axios from 'axios';
- import { type Character } from '@/types/Character';
- import { type CharacterFilms } from '@/types/CharacterFilms';
- import { getCharacterDetail } from '../../services/characters/CharacterDetails.api'
-
- //import type {APIResponse} from '../../types/APIResponse';
+import { type Character } from '@/types/Character';
+import { type FilmDetails } from '@/types/CharacterFilms';
+import { getCharacterDetail } from '@/services/characters/CharacterDetails.api'
 
 const axiosClient = axios.create({
   baseURL: "https://swapi.dev/api/people"
 });
 
-export async function getAllCharacters(currentPage: number){
+export async function getAllCharacters(currentPage: number) {
   try {
     const { data } = await axiosClient.get<Character>("/?page=" + currentPage);
     return [null, data];
   }
-  catch(error) {
+  catch (error) {
     return [error];
   }
 }
 
-//TODO: placeholder, work in progress
-export async function getCharacterDetails(selectedCharacter: Character){
+export async function getCharacterFilmDetails(selectedCharacter: Character) {
   try {
-    console.log(selectedCharacter.films[0])
-
-    const [error, data] = await getCharacterDetail(selectedCharacter.films[0]);
-    console.log(data)
-  //  species
-  //  starshhips
-  //  vehicles
-  //  films
-   return [null, data];
+    let filmDetails: FilmDetails[] = [];
+    for await(var filmUrl of selectedCharacter.films) {
+      let filmData = await getCharacterDetail<FilmDetails>(filmUrl);
+      filmDetails.push(filmData.content)
+    };
+    return [null, filmDetails];
   }
-  catch(error) {
+  catch (error) {
+    console.error(error);
     return [error];
   }
 }

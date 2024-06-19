@@ -1,7 +1,3 @@
-export type CharacterFilms = {
-    films: FilmDetails[]
-}
-
 export type FilmDetails = {
     title: string;
     episode_id: number;
