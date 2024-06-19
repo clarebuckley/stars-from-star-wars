@@ -11,7 +11,5 @@ export interface Character  {
     skin_color: string,
     edited: Date,
     species: string[],
-    starships: string[],
     url: string,
-    vehicles: string[]
 }
