@@ -1,4 +1,4 @@
-export type Character = {
+export interface Character  {
     birth_year: string,
     eye_color: string,
     films: string[],
@@ -14,5 +14,4 @@ export type Character = {
     starships: string[],
     url: string,
     vehicles: string[]
-  }
-  //TODO: use this type for characters
+}

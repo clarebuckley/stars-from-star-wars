@@ -29,11 +29,44 @@
                     <p>Gender: {{ selectedCharacter.gender }}</p>
                     <p>Hair colour: {{ selectedCharacter.hair_color }}</p>
                     <p>Mass: {{ selectedCharacter.mass }}</p>
+
+                    <v-expansion-panels>
+                        <v-expansion-panel>
+                            <v-expansion-panel-title>
+                                Homeworld: homeworld name
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                homeworld details
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                        <v-expansion-panel>
+                            <v-expansion-panel-title>
+                                Species: species name
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                species details
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                        <v-expansion-panel>
+                            <v-expansion-panel-title>
+                                Starships
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                ships details
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                        <v-expansion-panel>
+                            <v-expansion-panel-title>
+                                Vehicles
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text>
+                                vehicles details
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                    </v-expansion-panels>
+
+
                     <p>Data last updated on: {{ selectedCharacter.edited }}</p>
-                    <h2>Homeworld:</h2>
-                    <h2>Species:</h2>
-                    <h2>Starships:</h2>
-                    <h2>Vehicles:</h2>
                 </v-card>
             </v-col>
         </v-row>
@@ -82,7 +115,7 @@
     async function updateSelectedCharacter(newSelectedCharacter){
         pageLoading.value = true;
         selectedCharacter.value = characters.value.find(x => x.url == newSelectedCharacter);
-        const [error, characterResponse] = await getAllCharacters(selectedCharacter.value);
+        const [error, characterResponse] = await getCharacterDetails(selectedCharacter.value);
         if(error){
           handleError(error);
         }
