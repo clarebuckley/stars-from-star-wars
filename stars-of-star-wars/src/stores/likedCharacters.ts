@@ -9,9 +9,6 @@ export const useLikedCharactersStore = defineStore('likedCharacters', {
   getters: {
     getLikedCharacters(state) {
       return this.likedCharacters;
-    },
-    getSelectedCharacter(state) { //TODO: move this to a different store
-      return this.selectedCharacter;
     }
   },
   actions: {
@@ -23,10 +20,6 @@ export const useLikedCharactersStore = defineStore('likedCharacters', {
     },
     isLikedCharacter(characterUrl: string): boolean {
       return this.likedCharacters.some(x => x.url === characterUrl)
-    },
-    setSelectedCharacter(character: Character){
-      this.selectedCharacter = character;
-      console.log(this.selectedCharacter)
     }
   },
 })

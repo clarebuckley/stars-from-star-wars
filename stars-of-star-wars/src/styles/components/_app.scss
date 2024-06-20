@@ -1,0 +1,17 @@
+@import "../common/variables";
+
+h1 {
+    font-size: 50px;
+    color: $white-text;
+    text-transform: uppercase;
+}
+
+h2 {
+    font-size: 30px;
+    color: $black-text;
+}
+
+.app-container {
+    background-image: url("@/assets/space-background.png");
+    color: $black-text;
+}

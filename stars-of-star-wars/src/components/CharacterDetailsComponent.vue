@@ -1,30 +1,29 @@
 <template>
-    <v-card v-if="!likedCharactersStore.getSelectedCharacter" class="pa-2">
-        <h1>No character selected</h1>
+    <v-card v-if="!selectedCharacterStore.getSelectedCharacter" class="pa-2">
+        <h2>No character selected</h2>
     </v-card>
     <v-card v-else class="pa-2">
-        <h1>{{ likedCharactersStore.getSelectedCharacter.name }}</h1>
-        <p>Birth year: {{ likedCharactersStore.getSelectedCharacter.birth_year }}</p>
-        <p>Eye colour: {{ likedCharactersStore.getSelectedCharacter.eye_color }}</p>
-        <p>Gender: {{ likedCharactersStore.getSelectedCharacter.gender }}</p>
-        <p>Hair colour: {{ likedCharactersStore.getSelectedCharacter.hair_color }}</p>
-        <p>Mass: {{ likedCharactersStore.getSelectedCharacter.mass }}kg</p>
-        <p>Height: {{ likedCharactersStore.getSelectedCharacter.height }}cm</p>
+        <h2>{{ selectedCharacterStore.getSelectedCharacter.name }}</h2>
+        <p>Birth year: {{ selectedCharacterStore.getSelectedCharacter.birth_year }}</p>
+        <p>Eye colour: {{ selectedCharacterStore.getSelectedCharacter.eye_color }}</p>
+        <p>Gender: {{ selectedCharacterStore.getSelectedCharacter.gender }}</p>
+        <p>Hair colour: {{ selectedCharacterStore.getSelectedCharacter.hair_color }}</p>
+        <p>Mass: {{ selectedCharacterStore.getSelectedCharacter.mass }}kg</p>
+        <p>Height: {{ selectedCharacterStore.getSelectedCharacter.height }}cm</p>
 
-        <v-expansion-panels v-model="expanded">
-            <v-expansion-panel :title="'Loading...'" v-if="dataLoading">
-            </v-expansion-panel>
-            <v-expansion-panel title="Films" v-if="likedCharactersStore.getSelectedCharacter.films.length > 0" @click="getFilmData()">
+        <v-expansion-panels class="panels" v-model="expanded">
+            <v-expansion-panel v-if="pageLoading" title="Loading..."></v-expansion-panel>
+            <v-expansion-panel title="Films" v-if="selectedCharacterStore.getSelectedCharacter.films.length > 0" @click="getFilmData()">
                 <v-expansion-panel-text v-for="film in selectedCharacterFilms" :key="film.episode_id">
-                    <h2>{{ film.title }} (Episode {{ film.episode_id }})</h2>
+                    <h3>{{ film.title }} (Episode {{ film.episode_id }})</h3>
                     <p>Release date: {{ film.release_date }}</p>
                     <p>Directed by {{ film.director }}, produced by {{ film.producer }}</p>
                 </v-expansion-panel-text>
             </v-expansion-panel>
-            <v-expansion-panel title="Homeworld" v-if="likedCharactersStore.getSelectedCharacter.homeworld.length > 0"
+            <v-expansion-panel title="Homeworld" v-if="selectedCharacterStore.getSelectedCharacter.homeworld.length > 0"
                 @click="getHomeworldData()">
                 <v-expansion-panel-text>
-                    <h2>The planet {{ selectedCharacterHomeworld.name }}</h2>
+                    <h3>The planet {{ selectedCharacterHomeworld.name }}</h3>
                     <p>Climate: {{ selectedCharacterHomeworld.climate }}</p>
                     <p>Terrain: {{ selectedCharacterHomeworld.terrain }}</p>
                     <p>Surface water: {{ selectedCharacterHomeworld.surface_water }}%</p>
@@ -33,47 +32,50 @@
             </v-expansion-panel>
         </v-expansion-panels>
 
-        <router-link :to="{path: '/review/' + likedCharactersStore.getSelectedCharacter.name }">Review character</router-link>
-        <p>Data last updated on: {{ likedCharactersStore.getSelectedCharacter.edited }}</p>
+        <div class="d-flex justify-center">
+            <v-btn color="primary" @click="navigateToReviewView()" :disabled="pageLoading">
+                    Review character
+            </v-btn>
+        </div>
+        <p>Data last updated on: {{ selectedCharacterStore.getSelectedCharacter.edited }}</p>
     </v-card>
 </template>
-
-
 
 <script setup>
 import { getFilmDetailsByCharacter } from '../services/films/FilmDetails.api';
 import { getPlanetDetails } from '../services/planets/PlanetDetails.api.ts';
 import { ref, watch } from 'vue';
-import { useLikedCharactersStore } from '@/stores/likedCharacters'
+import { useSelectedCharactersStore } from '@/stores/selectedCharacter';
+import router from '@/router';
 
 const dataLoading = ref(false);
 const expanded = ref(null);
 const errored = ref(false);
-
 const selectedCharacterFilms = ref([]);
 const selectedCharacterHomeworld = ref([])
-const likedCharactersStore = useLikedCharactersStore();
+const selectedCharacterStore = useSelectedCharactersStore();
 
 async function getFilmData() {
     dataLoading.value = true;
-    const [error, filmResponse] = await getFilmDetailsByCharacter(likedCharactersStore.getSelectedCharacter);
-    selectedCharacterFilms.value = filmResponse;
+    const [error, filmResponse] = await getFilmDetailsByCharacter(selectedCharacterStore.getSelectedCharacter);
     if (error) {
         handleError(error);
     }
     else {
+        selectedCharacterFilms.value = filmResponse;
+        selectedCharacterStore.setSelectedCharacterFilms(filmResponse);
         dataLoading.value = false;
     }
 }
 
 async function getHomeworldData() {
     dataLoading.value = true;
-    const [error, planetResponse] = await getPlanetDetails(likedCharactersStore.getSelectedCharacter.homeworld);
-    selectedCharacterHomeworld.value = planetResponse;
+    const [error, planetResponse] = await getPlanetDetails(selectedCharacterStore.getSelectedCharacter.homeworld);
     if (error) {
         handleError(error);
     }
     else {
+        selectedCharacterHomeworld.value = planetResponse;
         dataLoading.value = false;
     }
 }
@@ -84,10 +86,6 @@ function resetData() {
     expanded.value = null;
 }
 
-watch(() => likedCharactersStore.getSelectedCharacter, (first, second) => {
-    resetData();
-});
-
 function handleError(error) {
     console.error(error)
     errored.value = true;
@@ -95,6 +93,17 @@ function handleError(error) {
     pageLoading.value = false;
 }
 
+async function navigateToReviewView(){
+    router.push('/review/' + selectedCharacterStore.getSelectedCharacter.name)
+}
 
-
+watch(() => selectedCharacterStore.getSelectedCharacter, (first, second) => {
+    resetData();
+});
 </script>
+
+<style scoped>
+h2, p, .panels {
+    padding: 10px;
+}
+</style>

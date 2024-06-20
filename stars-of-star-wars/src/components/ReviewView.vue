@@ -1,17 +1,18 @@
 <template>
-    <h2>Character review for [name goes here]</h2>
-
-    <v-container fluid class="fluid">
+    <v-container class="review-container fluid" fluid >
+    <h2>Character review for {{selectedCharacterStore.getSelectedCharacter.name}}</h2>
         <ErrorMessage v-if="errored" :errorMessage="errorMessage"></ErrorMessage>
-        <v-row justify="center" class="row">
+        <v-row justify="center" class="row review-form-container">
             <v-form ref="reviewForm" @submit.prevent="submitReview">
                 <v-text-field 
                     v-model="userName" 
+                    id="user-name"
                     :rules="[v => !!v || 'Name is required']"
                     label="Your name" outlined required>
                 </v-text-field>
                 <v-date-input 
                     v-model="dateWatched" 
+                    id="date-watched"
                     :rules="[v => new Date(v) < new Date() || 'Watched date can not be a date in the future']" 
                     label="Date watched"
                     outlined
@@ -19,17 +20,20 @@
                 </v-date-input>
                 <v-rating 
                     v-model="rating" 
+                    id="rating"
                     length="10">
                 </v-rating>
-                <v-text-field 
+                <v-textarea
                     v-model="description" 
+                    id="description"
                     label="Description" 
                     persistent-placeholder
                     outlined>
-                </v-text-field>
+                </v-textarea>
                 <v-select 
                     v-model="films" 
-                    :items="allFilms" 
+                    id="films-dropdown"
+                    :items="props.characterFilms" 
                     :rules="[v => v.length > 0 || 'Please select at least one film']"
                     hint="Select all films that this review relates to"
                     label="Select" 
@@ -38,13 +42,13 @@
                     required>
                 </v-select>
 
-                <v-btn color="primary" type="submit" :disabled="pageLoading">
+                <v-btn color="primary" id="submit-review-btn" type="submit" :disabled="pageLoading">
                     Submit review
                 </v-btn>
             </v-form>
         </v-row>
     </v-container>
-    <router-link :to="{ name: 'Character List' }">Back to character list</router-link>
+    <router-link id="back-link" :to="{ name: 'Character List' }">Back to character list</router-link>
 </template>
 
 
@@ -53,17 +57,22 @@
   import type { Review } from "../types/Review";
   import { createReview } from '../services/reviews/Reviews.api';
   import ErrorMessage from "./ErrorMessage.vue";
+  import { useSelectedCharactersStore } from "@/stores/selectedCharacter";
 
   const userName = ref("");
   const dateWatched = ref(new Date());
   const description = ref("");
   const rating = ref("");
   const films = ref<string[]>([]);
-  const allFilms = ref(["film1", "film2"]);
   const reviewForm = ref(null);
   const pageLoading = ref(false);
   const errored = ref(false);
   const errorMessage = ref("");
+  const selectedCharacterStore = useSelectedCharactersStore();
+
+  const props = defineProps({
+    characterFilms: []
+  })
 
   const review = computed<Review>(() => ({
     userName: userName.value,
@@ -88,4 +97,26 @@
     errored.value = true;
     errorMessage.value = error.message;
   }
+
 </script>
+
+
+<style scoped>
+.review-container{
+    background-color: white;
+    width: 700px;
+    border-radius: 30px;
+}
+
+.review-form-container {
+    padding: 20px;
+}
+
+@media only screen and (max-width: 700px) {
+  /* For mobile phones: */
+  .review-container {
+    width: 100%;
+    border-radius: 0;
+  }
+}
+</style>
