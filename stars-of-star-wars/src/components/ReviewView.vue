@@ -7,14 +7,16 @@
             <v-form ref="reviewForm" @submit.prevent="submitReview">
                 <v-text-field 
                     v-model="userName" 
+                    :rules="[v => !!v || 'Name is required']"
                     label="Your name" outlined required>
                 </v-text-field>
-                <v-text-field 
+                <v-date-input 
                     v-model="dateWatched" 
-                    label="Date watched" 
-                    outlined 
+                    :rules="[v => new Date(v) < new Date() || 'Watched date can not be a date in the future']" 
+                    label="Date watched"
+                    outlined
                     required>
-                </v-text-field>
+                </v-date-input>
                 <v-rating 
                     v-model="rating" 
                     length="10">
@@ -22,12 +24,13 @@
                 <v-text-field 
                     v-model="description" 
                     label="Description" 
-                    outlined 
-                    required>
+                    persistent-placeholder
+                    outlined>
                 </v-text-field>
                 <v-select 
                     v-model="films" 
                     :items="allFilms" 
+                    :rules="[v => v.length > 0 || 'Please select at least one film']"
                     hint="Select all films that this review relates to"
                     label="Select" 
                     multiple 
@@ -39,12 +42,8 @@
                     Submit review
                 </v-btn>
             </v-form>
-
         </v-row>
     </v-container>
-
-
-
     <router-link :to="{ name: 'Character List' }">Back to character list</router-link>
 </template>
 
@@ -54,11 +53,12 @@
   import type { Review } from "../types/Review";
 
   const userName = ref("");
-  const dateWatched = ref("");
+  const dateWatched = ref(new Date());
   const description = ref("");
   const rating = ref("");
-  const films = ref([]);
+  const films = ref<string[]>([]);
   const allFilms = ref(["film1", "film2"]);
+  const reviewForm = ref(null);
 
   const review = computed<Review>(() => ({
     userName: userName.value,
@@ -68,9 +68,10 @@
     films: films.value
   }));
 
-  function submitReview(){
-    //validate
-    //make API request
-    console.log(review.value)
+  async function submitReview(){
+    const { valid } = await reviewForm.value.validate()
+    if(valid){
+        console.log(review.value)
+    } 
   }
 </script>

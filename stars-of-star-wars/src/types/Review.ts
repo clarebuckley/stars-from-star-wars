@@ -1,6 +1,6 @@
 export interface Review  {
     userName: string,
-    dateWatched: string,
+    dateWatched: Date,
     description: string,
     rating: string,
     films: string[]
