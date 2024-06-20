@@ -2,8 +2,8 @@
     <h2>Character review for [name goes here]</h2>
 
     <v-container fluid class="fluid">
+        <ErrorMessage v-if="errored" :errorMessage="errorMessage"></ErrorMessage>
         <v-row justify="center" class="row">
-
             <v-form ref="reviewForm" @submit.prevent="submitReview">
                 <v-text-field 
                     v-model="userName" 
@@ -38,7 +38,7 @@
                     required>
                 </v-select>
 
-                <v-btn color="primary" type="submit">
+                <v-btn color="primary" type="submit" :disabled="pageLoading">
                     Submit review
                 </v-btn>
             </v-form>
@@ -51,6 +51,8 @@
 <script lang="ts" setup>
   import { computed, ref } from "vue";
   import type { Review } from "../types/Review";
+  import { createReview } from '../services/reviews/Reviews.api';
+  import ErrorMessage from "./ErrorMessage.vue";
 
   const userName = ref("");
   const dateWatched = ref(new Date());
@@ -59,6 +61,9 @@
   const films = ref<string[]>([]);
   const allFilms = ref(["film1", "film2"]);
   const reviewForm = ref(null);
+  const pageLoading = ref(false);
+  const errored = ref(false);
+  const errorMessage = ref("");
 
   const review = computed<Review>(() => ({
     userName: userName.value,
@@ -71,7 +76,16 @@
   async function submitReview(){
     const { valid } = await reviewForm.value.validate()
     if(valid){
-        console.log(review.value)
+        pageLoading.value = true;
+        const [error] = await createReview(review.value);
+        if (error) {
+            handleError(error);
+        }
     } 
+  }
+
+  function handleError(error: any){
+    errored.value = true;
+    errorMessage.value = error.message;
   }
 </script>
