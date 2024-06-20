@@ -42,13 +42,17 @@
                     required>
                 </v-select>
 
+                <div class="navigation-container d-flex justify-space-between">
+                  <router-link id="back-link" :to="{ name: 'Character List' }">< Back to character list</router-link>
                 <v-btn color="primary" id="submit-review-btn" type="submit" :disabled="pageLoading">
                     Submit review
                 </v-btn>
+                </div>
+
             </v-form>
         </v-row>
     </v-container>
-    <router-link id="back-link" :to="{ name: 'Character List' }">Back to character list</router-link>
+
 </template>
 
 
@@ -102,6 +106,9 @@
 
 
 <style scoped>
+.navigation-container {
+  padding-top: 20px;
+}
 .review-container{
     background-color: white;
     width: 700px;

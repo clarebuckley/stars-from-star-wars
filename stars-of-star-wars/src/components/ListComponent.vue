@@ -23,7 +23,7 @@
                 </div>
 
             </v-col>
-            <v-col cols="6">
+            <v-col cols="6" class="details-container">
                 <CharacterDetailsComponent :selectedCharacter="selectedCharacter"></CharacterDetailsComponent>
             </v-col>
         </v-row>
@@ -81,7 +81,7 @@ watch(currentPage, getData)
 <style scoped>
 
 .list {
-    overflow-y: scroll;
+    overflow-y: auto;
     h2{
         padding: 5px;
     }
@@ -100,4 +100,9 @@ watch(currentPage, getData)
     padding-right: 10px;
 }
 
+.details-container {
+
+    max-height: 90vh;
+    overflow-y: auto;
+}
 </style>
