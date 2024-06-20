@@ -33,7 +33,7 @@
             </v-expansion-panel>
         </v-expansion-panels>
 
-
+        <router-link :to="{path: '/review/' + likedCharactersStore.getSelectedCharacter.name }">Review character</router-link>
         <p>Data last updated on: {{ likedCharactersStore.getSelectedCharacter.edited }}</p>
     </v-card>
 </template>

@@ -9,7 +9,8 @@
                 <div>
                     <v-btn v-if="!character.liked" @click="addLikedCharacter(character)" density="compact"
                         icon="mdi-heart-outline"></v-btn>
-                    <v-btn v-else @click="removeLikedCharacter(character)" density="compact" icon="mdi-heart"></v-btn>
+                    <v-btn v-else @click="removeLikedCharacter(character)" density="compact" 
+                        icon="mdi-heart"></v-btn>
                 </div>
 
             </v-list-item-title>
