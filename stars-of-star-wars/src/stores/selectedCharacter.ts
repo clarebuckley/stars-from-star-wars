@@ -12,6 +12,9 @@ export const useSelectedCharactersStore = defineStore('selectedCharacter', {
     },
     getSelectedCharacterFilms(state) { 
         return this.selectedCharacterFilms;
+    },
+    isCharacterSelected(state){
+      return Object.keys(this.selectedCharacter).length !== 0
     }
   },
   actions: {

@@ -1,5 +1,5 @@
 <template>
-    <v-card v-if="!selectedCharacterStore.getSelectedCharacter" class="pa-2">
+     <v-card v-if="!selectedCharacterStore.isCharacterSelected" class="pa-2">
         <h2>No character selected</h2>
     </v-card>
     <v-card v-else class="pa-2">
@@ -45,7 +45,6 @@ import { getPlanetDetails } from '../services/planets/PlanetDetails.api.ts';
 import { ref, watch } from 'vue';
 import { useSelectedCharactersStore } from '@/stores/selectedCharacter';
 import router from '@/router';
-
 
 const expanded = ref(null);
 const errored = ref(false);

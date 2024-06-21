@@ -24,7 +24,7 @@
 
             </v-col>
             <v-col cols="6" class="details-container">
-                <CharacterDetailsComponent :selectedCharacter="selectedCharacter"></CharacterDetailsComponent>
+                <CharacterDetailsComponent></CharacterDetailsComponent>
             </v-col>
         </v-row>
     </div>
@@ -48,7 +48,6 @@ const errored = ref(false);
 const pageLoading = ref(true);
 const errorMessage = ref("");
 const likedCharactersStore = useLikedCharactersStore();
-const selectedCharacterStore = useSelectedCharactersStore();
 
 async function getData() {
     pageLoading.value = true;
@@ -58,7 +57,6 @@ async function getData() {
     }
     else {
         characters.value = charactersResponse.results;
-        selectedCharacterStore.setSelectedCharacter(charactersResponse.results[0]);
         characterCount.value = charactersResponse.count;
         totalPages.value = Math.ceil(charactersResponse.count / 10);
         pageLoading.value = false;
