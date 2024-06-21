@@ -19,6 +19,7 @@ When more time is available, the following changes would improve this project:
 * Improvements to the UI to improve UX (the given solution was created to demonstrate core Vue skills)
 * Added feature to search for characters by name
 * Use types on each API request, and wherever else applicable
+* Global error handling (remove repeated handleError code, have global error component to be updated as necessary)
 * Add 404 page
 * Move all data getting/setting into a store as one central place (instead of getting/setting in a mix of both components and stores)
 
