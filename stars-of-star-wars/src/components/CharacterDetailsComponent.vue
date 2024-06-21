@@ -12,9 +12,9 @@
         <p>Height: {{ selectedCharacterStore.getSelectedCharacter.height }}cm</p>
 
         <v-expansion-panels class="panels" v-model="expanded">
-            <v-expansion-panel v-if="pageLoading" title="Loading..."></v-expansion-panel>
-            <v-expansion-panel title="Films" v-if="selectedCharacterStore.getSelectedCharacter.films.length > 0" @click="getFilmData()">
-                <v-expansion-panel-text v-for="film in selectedCharacterFilms" :key="film.episode_id">
+            <v-expansion-panel v-if="dataLoading" title="Loading..."></v-expansion-panel>
+            <v-expansion-panel title="Films" v-if="selectedCharacterStore.getSelectedCharacter.films.length > 0">
+                <v-expansion-panel-text v-for="film in selectedCharacterStore.getSelectedCharacterFilms" :key="film.episode_id">
                     <h3>{{ film.title }} (Episode {{ film.episode_id }})</h3>
                     <p>Release date: {{ film.release_date }}</p>
                     <p>Directed by {{ film.director }}, produced by {{ film.producer }}</p>
@@ -42,7 +42,6 @@
 </template>
 
 <script setup>
-import { getFilmDetailsByCharacter } from '../services/films/FilmDetails.api';
 import { getPlanetDetails } from '../services/planets/PlanetDetails.api.ts';
 import { ref, watch } from 'vue';
 import { useSelectedCharactersStore } from '@/stores/selectedCharacter';
@@ -51,23 +50,10 @@ import router from '@/router';
 const dataLoading = ref(false);
 const expanded = ref(null);
 const errored = ref(false);
-const selectedCharacterFilms = ref([]);
 const selectedCharacterHomeworld = ref([])
 const selectedCharacterStore = useSelectedCharactersStore();
 
-async function getFilmData() {
-    dataLoading.value = true;
-    const [error, filmResponse] = await getFilmDetailsByCharacter(selectedCharacterStore.getSelectedCharacter);
-    if (error) {
-        handleError(error);
-    }
-    else {
-        selectedCharacterFilms.value = filmResponse;
-        selectedCharacterStore.setSelectedCharacterFilms(filmResponse);
-        dataLoading.value = false;
-    }
-}
-
+console.log(selectedCharacterStore.selectedCharacterFilms)
 async function getHomeworldData() {
     dataLoading.value = true;
     const [error, planetResponse] = await getPlanetDetails(selectedCharacterStore.getSelectedCharacter.homeworld);
@@ -81,7 +67,6 @@ async function getHomeworldData() {
 }
 
 function resetData() {
-    selectedCharacterFilms.value = [];
     selectedCharacterHomeworld.value = [];
     expanded.value = null;
 }

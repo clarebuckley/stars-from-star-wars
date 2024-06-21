@@ -1,4 +1,5 @@
 <template>
+     <ErrorMessage v-if="errored" :errorMessage="errorMessage"></ErrorMessage>
     <v-list lines="three">
         <v-list-item v-for="character in characters" :key="character.url"
             @click="updateSelectedCharacter(character.url)">
@@ -21,18 +22,33 @@
 <script setup>
 import { useLikedCharactersStore } from '@/stores/likedCharacters'
 import { useSelectedCharactersStore } from '@/stores/selectedCharacter';
+import { getFilmDetailsByCharacter } from '../services/films/FilmDetails.api';
+import { ref } from 'vue';
 
 const likedCharactersStore = useLikedCharactersStore();
 const selectedCharacterStore = useSelectedCharactersStore();
+const errored = ref(false);
+const errorMessage = ref("");
 
 const props = defineProps({
-    characters: []
+    characters: [],
 })
 
-function updateSelectedCharacter(selectedCharacter) {
+async function updateSelectedCharacter(selectedCharacter) {
     let newSelectedCharacter = props.characters.find(x => x.url == selectedCharacter);
+    await getFilmData(newSelectedCharacter);
     selectedCharacterStore.setSelectedCharacter(newSelectedCharacter)
-    console.log(selectedCharacter)
+
+}
+
+async function getFilmData(selectedCharacter) {
+    const [error, filmResponse] = await getFilmDetailsByCharacter(selectedCharacter);
+    if (error) {
+        handleError(error);
+    }
+    else {
+        selectedCharacterStore.setSelectedCharacterFilms(filmResponse);
+    }
 }
 
 function addLikedCharacter(characterToLike) {
@@ -44,4 +60,10 @@ function removeLikedCharacter(characterToRemove) {
     characterToRemove.liked = false;
     likedCharactersStore.removeLikedCharacter(characterToRemove.url);
 }
+
+function handleError(error){
+    console.error(error)
+    errored.value = true;
+    errorMessage.value = error.message;
+  }
 </script>

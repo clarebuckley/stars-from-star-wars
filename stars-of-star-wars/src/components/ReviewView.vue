@@ -33,7 +33,7 @@
                 <v-select 
                     v-model="films" 
                     id="films-dropdown"
-                    :items="props.characterFilms" 
+                    :items="selectedCharacterStore.selectedCharacterFilms" 
                     :rules="[v => v.length > 0 || 'Please select at least one film']"
                     hint="Select all films that this review relates to"
                     label="Select" 
@@ -74,10 +74,6 @@
   const errorMessage = ref("");
   const selectedCharacterStore = useSelectedCharactersStore();
 
-  const props = defineProps({
-    characterFilms: []
-  })
-
   const review = computed<Review>(() => ({
     userName: userName.value,
     dateWatched: dateWatched.value,
@@ -98,6 +94,7 @@
   }
 
   function handleError(error: any){
+    console.error(error);
     errored.value = true;
     errorMessage.value = error.message;
   }

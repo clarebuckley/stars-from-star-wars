@@ -20,6 +20,7 @@ When more time is available, the following changes would improve this project:
 * Added feature to search for characters by name
 * Use types on each API request, and wherever else applicable
 * Add 404 page
+* Move all data getting/setting into a store as one central place (instead of getting/setting in a mix of both components and stores)
 
 ## Test scenarios
 Due to time constraints, unit testing has not been added to the project. 
