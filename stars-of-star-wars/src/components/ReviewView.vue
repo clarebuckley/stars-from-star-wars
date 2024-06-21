@@ -88,7 +88,10 @@
         pageLoading.value = true;
         const [error] = await createReview(review.value);
         if (error) {
+          pageLoading.value = false;
             handleError(error);
+        } else {
+          pageLoading.value = false;
         }
     } 
   }

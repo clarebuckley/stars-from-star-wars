@@ -12,7 +12,6 @@
         <p>Height: {{ selectedCharacterStore.getSelectedCharacter.height }}cm</p>
 
         <v-expansion-panels class="panels" v-model="expanded">
-            <v-expansion-panel v-if="dataLoading" title="Loading..."></v-expansion-panel>
             <v-expansion-panel title="Films" v-if="selectedCharacterStore.getSelectedCharacter.films.length > 0">
                 <v-expansion-panel-text v-for="film in selectedCharacterStore.getSelectedCharacterFilms" :key="film.episode_id">
                     <h3>{{ film.title }} (Episode {{ film.episode_id }})</h3>
@@ -23,7 +22,7 @@
             <v-expansion-panel title="Homeworld" v-if="selectedCharacterStore.getSelectedCharacter.homeworld.length > 0"
                 @click="getHomeworldData()">
                 <v-expansion-panel-text>
-                    <h3>The planet {{ selectedCharacterHomeworld.name }}</h3>
+                    <h3>{{ selectedCharacterHomeworld.name }}</h3>
                     <p>Climate: {{ selectedCharacterHomeworld.climate }}</p>
                     <p>Terrain: {{ selectedCharacterHomeworld.terrain }}</p>
                     <p>Surface water: {{ selectedCharacterHomeworld.surface_water }}%</p>
@@ -47,22 +46,19 @@ import { ref, watch } from 'vue';
 import { useSelectedCharactersStore } from '@/stores/selectedCharacter';
 import router from '@/router';
 
-const dataLoading = ref(false);
+
 const expanded = ref(null);
 const errored = ref(false);
 const selectedCharacterHomeworld = ref([])
 const selectedCharacterStore = useSelectedCharactersStore();
 
-console.log(selectedCharacterStore.selectedCharacterFilms)
 async function getHomeworldData() {
-    dataLoading.value = true;
     const [error, planetResponse] = await getPlanetDetails(selectedCharacterStore.getSelectedCharacter.homeworld);
     if (error) {
         handleError(error);
     }
     else {
         selectedCharacterHomeworld.value = planetResponse;
-        dataLoading.value = false;
     }
 }
 
