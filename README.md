@@ -14,6 +14,8 @@ Images used in this project are listed as free for use under the Pixabay Content
 To run the solution, please run 'npm run serve' inside the 'stars-of-star-wars' directory.
 
 # Future considerations:
+
+## Code improvements
 When more time is available, the following changes would improve this project:
 * More sophisticated axios services with better error handling and removed duplicated code between services, e.g. a base service that handles common setup, extended support for requests requiring headers/authentication
 * Improvements to the UI to improve UX (the given solution was created to demonstrate core Vue skills)
