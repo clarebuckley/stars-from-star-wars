@@ -22,6 +22,7 @@ When more time is available, the following changes would improve this project:
 * Global error handling (remove repeated handleError code, have global error component to be updated as necessary)
 * Add 404 page
 * Move all data getting/setting into a store as one central place (instead of getting/setting in a mix of both components and stores)
+* Handle 'unknown' in mass/height (currently shows are unknownkg)
 
 ## Test scenarios
 Due to time constraints, unit testing has not been added to the project. 
